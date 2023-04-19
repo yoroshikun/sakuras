@@ -1,9 +1,13 @@
+import os
 from langchain.document_loaders.confluence import ConfluenceLoader
+
+username = os.environ.get("CONFLUENCE_USERNAME", "")
+api_key = os.environ.get("CONFLUENCE_API_KEY", "")
 
 loader = ConfluenceLoader(
         url="https://mercari.atlassian.net/wiki",
-        username="",
-        api_key=""
+        username=str(username),
+        api_key=str(api_key)
     )
 
 def load(space_key: str, cql: str = None):

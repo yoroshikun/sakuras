@@ -1,7 +1,13 @@
 import chromadb
+import os
 from chromadb.utils import embedding_functions
+from chromadb.config import Settings
 
-chroma_client = chromadb.Client()
+chroma_client = chromadb.Client(Settings(
+    chroma_api_impl="rest",
+    chroma_server_host=os.environ.get("CHROMA_HOST", "0.0.0.0"),
+    chroma_server_http_port="8000"
+    ))
 
 def init_collection(name: str):
     chroma_client.create_collection(name="test")
