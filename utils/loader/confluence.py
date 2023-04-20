@@ -6,6 +6,8 @@ from atlassian import Confluence
 from atlassian.errors import ApiValueError
 from langchain.document_loaders.confluence import ConfluenceLoader
 from requests import HTTPError
+from utils.indexer import confluence as confluence_indexer
+from utils.indexer import indexer
 
 confluence_format = "%Y-%m-%dT%H:%M:%S.%fZ"
 cql_format = "%Y/%m/%d %H:%M"
@@ -13,19 +15,20 @@ filename = "last_updated.txt"
 
 loader = ConfluenceLoader(
     url="https://mercari.atlassian.net/wiki",
-    username=os.environ.get("ATLASSIAN_USERNAME"),
-    api_key=os.environ.get("ATLASSIAN_API_KEY")
+    username=os.environ.get("CONFLUENCE_USERNAME"),
+    api_key=os.environ.get("CONFLUENCE_API_KEY")
 )
 
 confluence = Confluence(
     url="https://mercari.atlassian.net/wiki",
-    username=os.environ.get("ATLASSIAN_USERNAME"),
-    password=os.environ.get("ATLASSIAN_API_KEY")
+    username=os.environ.get("CONFLUENCE_USERNAME"),
+    password=os.environ.get("CONFLUENCE_API_KEY")
 )
 
 
 def iterate_latest_pages():
-    load()
+    indexer = confluence_indexer.ConfluenceIndexer()
+    load(indexer)
 
 
 def iterate_spaces():
@@ -40,7 +43,7 @@ def iterate_spaces():
     return pages
 
 
-def load(space_key: str = None):
+def load(indexer: indexer.Indexer, space_key: str = None):
     limit = 10
     start = 0
 
@@ -73,6 +76,7 @@ def load(space_key: str = None):
                     except Exception as e:
                         print('some error occurred during page procession {}'.format(e))
                 print('calling structurize api for docs')
+                # confluence_indexer.ConfluenceIndexer.create_documents(page_content_array, metadata_array)
                 docs = []
                 pages = loader.confluence.get_all_pages_from_space(space=space_key, limit=10, start=start,
                                                                    expand="body.storage.value,history,version")
@@ -110,6 +114,7 @@ def load(space_key: str = None):
                     except Exception as e:
                         print('some error occurred during page procession {}'.format(e))
                 print('calling structurize api for docs')
+                indexer.create_documents(page_content_array, metadata_array)
                 metadata_array = []
                 page_content_array = []
                 pages = exec_cql(start=start, limit=limit,

@@ -1,20 +1,22 @@
 import unittest
 
 from confluence import load, iterate_spaces, iterate_latest_pages
+import os
+import sys
+sys.path.insert(0, os.path.abspath('..'))
+
+# class TestChromaUtils(unittest.TestCase):
+#     def test_load(self):
+#         documents = load(space_key="~637b97702acfad92d7b0ab23")
+#         print(documents)
+#         self.assertEqual(1, 1)
 
 
-class TestChromaUtils(unittest.TestCase):
-    def test_load(self):
-        documents = load(space_key="~637b97702acfad92d7b0ab23")
-        print(documents)
-        self.assertEqual(1, 1)
-
-
-class TestFetchConfluence(unittest.TestCase):
-    def test_get_spaces(self):
-        spaces = iterate_spaces()
-        print(spaces)
-        self.assertEqual(1, 1)
+# class TestFetchConfluence(unittest.TestCase):
+#     def test_get_spaces(self):
+#         spaces = iterate_spaces()
+#         print(spaces)
+#         self.assertEqual(1, 1)
 
 
 class TestFetchConfluenceByCQL(unittest.TestCase):
